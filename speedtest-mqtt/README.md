@@ -162,6 +162,11 @@ configuration. The default (`15134`) is a Brisbane, AU server.
 
 ## Changelog
 
+### 1.0.2
+- Fix: moved `build_from` to a separate `build.yaml` file — this is what HA
+  Supervisor actually reads to populate `BUILD_FROM` before invoking Docker.
+  Previously it was in `config.yaml` which caused `BUILD_FROM` to be blank.
+
 ### 1.0.1
 - Fix: replaced unreliable packagecloud Alpine script with direct Ookla binary
   download — resolves "unknown error" during image build
