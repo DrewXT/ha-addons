@@ -1,0 +1,3 @@
+#!/usr/bin/with-contenv bashio
+# s6-overlay service entry point
+exec /usr/bin/speedtest_loop.sh

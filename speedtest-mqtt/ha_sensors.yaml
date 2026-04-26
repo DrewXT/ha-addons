@@ -1,0 +1,51 @@
+# Add these to your Home Assistant configuration.yaml
+# or place in a file included via sensor: !include sensors.yaml
+
+mqtt:
+  sensor:
+    - name: "Speedtest Result URL"
+      state_topic: "speedtest/result"
+      value_template: "{{ value_json.state }}"
+      icon: mdi:speedometer
+
+    - name: "Speedtest Download"
+      state_topic: "speedtest/result"
+      value_template: "{{ value_json.attributes.download }}"
+      unit_of_measurement: "Mbps"
+      device_class: data_rate
+      icon: mdi:download-network
+
+    - name: "Speedtest Upload"
+      state_topic: "speedtest/result"
+      value_template: "{{ value_json.attributes.upload }}"
+      unit_of_measurement: "Mbps"
+      device_class: data_rate
+      icon: mdi:upload-network
+
+    - name: "Speedtest Ping"
+      state_topic: "speedtest/result"
+      value_template: "{{ value_json.attributes.ping }}"
+      unit_of_measurement: "ms"
+      icon: mdi:lan-pending
+
+    - name: "Speedtest Jitter"
+      state_topic: "speedtest/result"
+      value_template: "{{ value_json.attributes.jitter }}"
+      unit_of_measurement: "ms"
+      icon: mdi:sine-wave
+
+    - name: "Speedtest Server"
+      state_topic: "speedtest/result"
+      value_template: "{{ value_json.attributes.server }}"
+      icon: mdi:server-network
+
+    - name: "Speedtest ISP"
+      state_topic: "speedtest/result"
+      value_template: "{{ value_json.attributes.isp }}"
+      icon: mdi:web
+
+    - name: "Speedtest Last Run"
+      state_topic: "speedtest/result"
+      value_template: "{{ value_json.attributes.time_run }}"
+      device_class: timestamp
+      icon: mdi:clock-check
