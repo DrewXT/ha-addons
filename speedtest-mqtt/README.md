@@ -162,6 +162,12 @@ configuration. The default (`15134`) is a Brisbane, AU server.
 
 ## Changelog
 
+### 1.0.1
+- Fix: replaced unreliable packagecloud Alpine script with direct Ookla binary
+  download — resolves "unknown error" during image build
+- Fix: added `libstdc++` dependency required by the Speedtest CLI binary
+- Added explicit `build_from` base images per architecture in `config.yaml`
+
 ### 1.0.0
 - Initial release
 - Configurable interval, broker, topic, and server ID
