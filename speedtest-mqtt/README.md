@@ -162,6 +162,13 @@ configuration. The default (`15134`) is a Brisbane, AU server.
 
 ## Changelog
 
+### 1.0.4
+- Fix: drop `build.yaml` entirely (Supervisor warns it is deprecated)
+- Fix: use `uname -m` for arch detection — `BUILD_ARCH` is passed blank by the Supervisor for custom add-ons, causing the "Unsupported arch:" failure
+- Fix: add default fallback in `FROM` so Docker does not error when `BUILD_FROM` is blank during local testing
+- Fix: removed deprecated `armhf`/`armv7` from `arch` in `config.yaml`
+
+
 ### 1.0.2
 - Fix: moved `build_from` to a separate `build.yaml` file — this is what HA
   Supervisor actually reads to populate `BUILD_FROM` before invoking Docker.

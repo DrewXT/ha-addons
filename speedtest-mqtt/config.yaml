@@ -1,13 +1,11 @@
 name: "Speedtest MQTT"
 description: "Runs periodic speedtests and publishes results to MQTT for Home Assistant"
-version: "1.0.2"
+version: "1.0.4"
 slug: "speedtest_mqtt"
 init: false
 arch:
   - aarch64
   - amd64
-  - armhf
-  - armv7
 startup: services
 boot: auto
 homeassistant_api: false
