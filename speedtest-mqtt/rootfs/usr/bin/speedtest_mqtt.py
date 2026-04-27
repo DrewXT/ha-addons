@@ -102,8 +102,16 @@ def parse_result(data: dict) -> dict:
     ping_ms        = round(data["ping"]["latency"],  3)
     jitter_ms      = round(data["ping"]["jitter"],   3)
 
+    # result.url is absent when persisted=False (Ookla did not save the result).
+    # Fall back to a constructed URL using the result ID, or just "ok".
+    result_id  = data["result"].get("id", "")
+    result_url = data["result"].get(
+        "url",
+        f"https://www.speedtest.net/result/{result_id}" if result_id else "ok",
+    )
+
     return {
-        "state": data["result"]["url"],
+        "state": result_url,
         "attributes": {
             "time_run":  data["timestamp"],
             "ping":      ping_ms,
@@ -112,7 +120,10 @@ def parse_result(data: dict) -> dict:
             "upload":    upload_mbps,
             "server":    data["server"]["name"],
             "location":  data["server"]["location"],
+            "country":   data["server"].get("country", ""),
             "isp":       data["isp"],
+            "persisted": data["result"].get("persisted", False),
+            "result_id": result_id,
         },
     }
 

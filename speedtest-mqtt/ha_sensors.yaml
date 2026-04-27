@@ -1,51 +1,93 @@
-# Add these to your Home Assistant configuration.yaml
-# or place in a file included via sensor: !include sensors.yaml
+# =============================================================================
+# Speedtest MQTT — Home Assistant Package File
+# Save as /config/packages/speedtest.yaml
+#
+# Ensure configuration.yaml contains:
+#   homeassistant:
+#     packages: !include_dir_named packages
+# =============================================================================
 
+# -----------------------------------------------------------------------------
+# 1. MQTT sensor — receives the raw JSON payload and exposes attributes
+# -----------------------------------------------------------------------------
 mqtt:
   sensor:
-    - name: "Speedtest Result URL"
+    - name: "Speedtest Result"
+      unique_id: speedtest_result_mqtt
       state_topic: "speedtest/result"
       value_template: "{{ value_json.state }}"
+      json_attributes_topic: "speedtest/result"
+      json_attributes_template: "{{ value_json.attributes | tojson }}"
       icon: mdi:speedometer
 
-    - name: "Speedtest Download"
-      state_topic: "speedtest/result"
-      value_template: "{{ value_json.attributes.download }}"
-      unit_of_measurement: "Mbps"
-      device_class: data_rate
-      icon: mdi:download-network
+# -----------------------------------------------------------------------------
+# 2. Template sensors — pull individual values from the MQTT sensor attributes
+#    Uses modern (2024.x+) template sensor syntax
+# -----------------------------------------------------------------------------
+template:
+  - sensor:
+      - name: "Speedtest Download"
+        unique_id: speedtest_download
+        state: "{{ state_attr('sensor.speedtest_result', 'download') }}"
+        unit_of_measurement: "Mbit/s"
+        state_class: measurement
+        icon: mdi:download-network
 
-    - name: "Speedtest Upload"
-      state_topic: "speedtest/result"
-      value_template: "{{ value_json.attributes.upload }}"
-      unit_of_measurement: "Mbps"
-      device_class: data_rate
-      icon: mdi:upload-network
+      - name: "Speedtest Upload"
+        unique_id: speedtest_upload
+        state: "{{ state_attr('sensor.speedtest_result', 'upload') }}"
+        unit_of_measurement: "Mbit/s"
+        state_class: measurement
+        icon: mdi:upload-network
 
-    - name: "Speedtest Ping"
-      state_topic: "speedtest/result"
-      value_template: "{{ value_json.attributes.ping }}"
-      unit_of_measurement: "ms"
-      icon: mdi:lan-pending
+      - name: "Speedtest Ping"
+        unique_id: speedtest_ping
+        state: "{{ state_attr('sensor.speedtest_result', 'ping') }}"
+        unit_of_measurement: "ms"
+        state_class: measurement
+        icon: mdi:lan-pending
 
-    - name: "Speedtest Jitter"
-      state_topic: "speedtest/result"
-      value_template: "{{ value_json.attributes.jitter }}"
-      unit_of_measurement: "ms"
-      icon: mdi:sine-wave
+      - name: "Speedtest Jitter"
+        unique_id: speedtest_jitter
+        state: "{{ state_attr('sensor.speedtest_result', 'jitter') }}"
+        unit_of_measurement: "ms"
+        state_class: measurement
+        icon: mdi:sine-wave
 
-    - name: "Speedtest Server"
-      state_topic: "speedtest/result"
-      value_template: "{{ value_json.attributes.server }}"
-      icon: mdi:server-network
+      - name: "Speedtest Last Run"
+        unique_id: speedtest_lastrun
+        state: "{{ state_attr('sensor.speedtest_result', 'time_run') }}"
+        device_class: timestamp
+        icon: mdi:clock
 
-    - name: "Speedtest ISP"
-      state_topic: "speedtest/result"
-      value_template: "{{ value_json.attributes.isp }}"
-      icon: mdi:web
+      - name: "Speedtest ISP"
+        unique_id: speedtest_isp
+        state: "{{ state_attr('sensor.speedtest_result', 'isp') }}"
+        icon: mdi:web
 
-    - name: "Speedtest Last Run"
-      state_topic: "speedtest/result"
-      value_template: "{{ value_json.attributes.time_run }}"
-      device_class: timestamp
-      icon: mdi:clock-check
+      - name: "Speedtest Server"
+        unique_id: speedtest_server
+        state: "{{ state_attr('sensor.speedtest_result', 'server') }}"
+        icon: mdi:server-network
+
+# -----------------------------------------------------------------------------
+# 3. Statistics sensors — rolling averages over the last 2 days
+# -----------------------------------------------------------------------------
+sensor:
+  - platform: statistics
+    name: "Speedtest Download Average"
+    unique_id: speedtest_download_average
+    entity_id: sensor.speedtest_download
+    state_characteristic: mean
+    max_age:
+      days: 2
+    sampling_size: 10000
+
+  - platform: statistics
+    name: "Speedtest Upload Average"
+    unique_id: speedtest_upload_average
+    entity_id: sensor.speedtest_upload
+    state_characteristic: mean
+    max_age:
+      days: 2
+    sampling_size: 10000
