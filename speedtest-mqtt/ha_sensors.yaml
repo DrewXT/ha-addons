@@ -1,82 +1,104 @@
 # =============================================================================
 # Speedtest MQTT — Home Assistant Package File
-# Save as /config/packages/speedtest.yaml
+# -----------------------------------------------------------------------------
+# INSTALLATION:
+#   1. Copy this file to /config/packages/speedtest.yaml
+#   2. Make sure your configuration.yaml has:
 #
-# Ensure configuration.yaml contains:
-#   homeassistant:
-#     packages: !include_dir_named packages
+#        homeassistant:
+#          packages: !include_dir_named packages
+#
+#   3. Restart Home Assistant (full restart, not just reload)
+#   4. Check Developer Tools → Template to verify sensors appear
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# 1. MQTT sensor — receives the raw JSON payload and exposes attributes
+# MQTT sensor — subscribes to the retained topic and exposes all attributes
 # -----------------------------------------------------------------------------
 mqtt:
   sensor:
     - name: "Speedtest Result"
-      unique_id: speedtest_result_mqtt
+      unique_id: "speedtest_result_mqtt"
       state_topic: "speedtest/result"
       value_template: "{{ value_json.state }}"
       json_attributes_topic: "speedtest/result"
       json_attributes_template: "{{ value_json.attributes | tojson }}"
       icon: mdi:speedometer
+      force_update: true
 
 # -----------------------------------------------------------------------------
-# 2. Template sensors — pull individual values from the MQTT sensor attributes
-#    Uses modern (2024.x+) template sensor syntax
+# Template sensors — individual values pulled from MQTT sensor attributes
+# Modern HA (2023.4+) template syntax
 # -----------------------------------------------------------------------------
 template:
   - sensor:
       - name: "Speedtest Download"
-        unique_id: speedtest_download
-        state: "{{ state_attr('sensor.speedtest_result', 'download') }}"
+        unique_id: "speedtest_download"
         unit_of_measurement: "Mbit/s"
         state_class: measurement
+        device_class: data_rate
         icon: mdi:download-network
+        availability: "{{ states('sensor.speedtest_result') not in ['unknown', 'unavailable', ''] }}"
+        state: >
+          {{ state_attr('sensor.speedtest_result', 'download') | float(0) }}
 
       - name: "Speedtest Upload"
-        unique_id: speedtest_upload
-        state: "{{ state_attr('sensor.speedtest_result', 'upload') }}"
+        unique_id: "speedtest_upload"
         unit_of_measurement: "Mbit/s"
         state_class: measurement
+        device_class: data_rate
         icon: mdi:upload-network
+        availability: "{{ states('sensor.speedtest_result') not in ['unknown', 'unavailable', ''] }}"
+        state: >
+          {{ state_attr('sensor.speedtest_result', 'upload') | float(0) }}
 
       - name: "Speedtest Ping"
-        unique_id: speedtest_ping
-        state: "{{ state_attr('sensor.speedtest_result', 'ping') }}"
+        unique_id: "speedtest_ping"
         unit_of_measurement: "ms"
         state_class: measurement
         icon: mdi:lan-pending
+        availability: "{{ states('sensor.speedtest_result') not in ['unknown', 'unavailable', ''] }}"
+        state: >
+          {{ state_attr('sensor.speedtest_result', 'ping') | float(0) }}
 
       - name: "Speedtest Jitter"
-        unique_id: speedtest_jitter
-        state: "{{ state_attr('sensor.speedtest_result', 'jitter') }}"
+        unique_id: "speedtest_jitter"
         unit_of_measurement: "ms"
         state_class: measurement
         icon: mdi:sine-wave
+        availability: "{{ states('sensor.speedtest_result') not in ['unknown', 'unavailable', ''] }}"
+        state: >
+          {{ state_attr('sensor.speedtest_result', 'jitter') | float(0) }}
 
       - name: "Speedtest Last Run"
-        unique_id: speedtest_lastrun
-        state: "{{ state_attr('sensor.speedtest_result', 'time_run') }}"
+        unique_id: "speedtest_lastrun"
         device_class: timestamp
         icon: mdi:clock
+        availability: "{{ states('sensor.speedtest_result') not in ['unknown', 'unavailable', ''] }}"
+        state: >
+          {{ state_attr('sensor.speedtest_result', 'time_run') }}
 
       - name: "Speedtest ISP"
-        unique_id: speedtest_isp
-        state: "{{ state_attr('sensor.speedtest_result', 'isp') }}"
+        unique_id: "speedtest_isp"
         icon: mdi:web
+        availability: "{{ states('sensor.speedtest_result') not in ['unknown', 'unavailable', ''] }}"
+        state: >
+          {{ state_attr('sensor.speedtest_result', 'isp') }}
 
       - name: "Speedtest Server"
-        unique_id: speedtest_server
-        state: "{{ state_attr('sensor.speedtest_result', 'server') }}"
+        unique_id: "speedtest_server"
         icon: mdi:server-network
+        availability: "{{ states('sensor.speedtest_result') not in ['unknown', 'unavailable', ''] }}"
+        state: >
+          {{ state_attr('sensor.speedtest_result', 'server') }}
 
 # -----------------------------------------------------------------------------
-# 3. Statistics sensors — rolling averages over the last 2 days
+# Statistics sensors — rolling mean over last 2 days
 # -----------------------------------------------------------------------------
 sensor:
   - platform: statistics
     name: "Speedtest Download Average"
-    unique_id: speedtest_download_average
+    unique_id: "speedtest_download_average"
     entity_id: sensor.speedtest_download
     state_characteristic: mean
     max_age:
@@ -85,7 +107,7 @@ sensor:
 
   - platform: statistics
     name: "Speedtest Upload Average"
-    unique_id: speedtest_upload_average
+    unique_id: "speedtest_upload_average"
     entity_id: sensor.speedtest_upload
     state_characteristic: mean
     max_age:
