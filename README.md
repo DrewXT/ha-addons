@@ -8,11 +8,9 @@ A collection of custom Home Assistant add-ons.
 
 ### [Speedtest MQTT](./speedtest-mqtt)
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)](./speedtest-mqtt/config.yaml)
+[![Version](https://img.shields.io/github/v/release/DrewXT/ha-addons?filter=speedtest-mqtt*&label=version&color=blue)](https://github.com/DrewXT/ha-addons/releases)
 ![Supports aarch64](https://img.shields.io/badge/aarch64-yes-green)
 ![Supports amd64](https://img.shields.io/badge/amd64-yes-green)
-![Supports armhf](https://img.shields.io/badge/armhf-yes-green)
-![Supports armv7](https://img.shields.io/badge/armv7-yes-green)
 
 Runs periodic internet speedtests via the Ookla Speedtest CLI and publishes
 structured results to your MQTT broker for use as Home Assistant sensors.

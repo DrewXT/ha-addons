@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "speedtest-mqtt/v*"   # e.g. speedtest-mqtt/v1.0.1
+
+jobs:
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          ADDON="${TAG%%/v*}"
+          VERSION="${TAG#*/v}"
+          echo "addon=$ADDON" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Extract changelog entry
+        id: changelog
+        run: |
+          ADDON="${{ steps.version.outputs.addon }}"
+          VERSION="${{ steps.version.outputs.version }}"
+          # Pull the section for this version out of the addon README
+          awk "/^### ${VERSION}/{found=1; next} found && /^### /{exit} found{print}" \
+            "${ADDON}/README.md" > release_notes.txt
+          cat release_notes.txt
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "${{ steps.version.outputs.addon }} v${{ steps.version.outputs.version }}"
+          body_path: release_notes.txt
+          token: ${{ secrets.GITHUB_TOKEN }}
