@@ -25,7 +25,7 @@ structured results to your MQTT broker for use as Home Assistant sensors.
    **Settings → Add-ons → Add-on Store → ⋮ → Repositories**
    and add:
    ```
-   https://github.com/YOUR_USERNAME/ha-addons
+   https://github.com/DrewXT/ha-addons
    ```
 2. Find the add-on in the store and click **Install**.
 3. Configure and **Start**.
