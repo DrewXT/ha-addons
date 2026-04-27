@@ -162,6 +162,16 @@ configuration. The default (`15134`) is a Brisbane, AU server.
 
 ## Changelog
 
+### 2.0.0
+- Rewrite: replaced shell scripts with a single Python script (`speedtest_mqtt.py`)
+- Fix: proper JSON parsing — no more `jq` parse errors on unexpected speedtest output
+- Fix: `--accept-license --accept-gdpr` flags passed on every run and pre-accepted at build time
+- Fix: subprocess timeout (120s) prevents the add-on hanging indefinitely
+- Fix: detailed error logging shows exact stdout/stderr when speedtest fails
+- Improved: MQTT uses `paho-mqtt` with QoS 1 and connection error detection
+- Added: icon and logo
+
+
 ### 1.0.4
 - Fix: drop `build.yaml` entirely (Supervisor warns it is deprecated)
 - Fix: use `uname -m` for arch detection — `BUILD_ARCH` is passed blank by the Supervisor for custom add-ons, causing the "Unsupported arch:" failure

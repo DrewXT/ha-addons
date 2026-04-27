@@ -1,9 +1,6 @@
 ARG BUILD_FROM
 FROM ${BUILD_FROM:-ghcr.io/home-assistant/amd64-base:latest}
 
-# Re-declare after FROM so the ARG is in scope for RUN steps
-ARG BUILD_FROM
-
 # Install runtime dependencies
 RUN apk add --no-cache \
     bash \
@@ -11,11 +8,15 @@ RUN apk add --no-cache \
     jq \
     libstdc++ \
     mosquitto-clients \
+    python3 \
+    py3-pip \
     tar
 
-# Install Ookla Speedtest CLI.
-# Uses uname -m at build time — avoids relying on BUILD_ARCH which the
-# HA Supervisor passes as blank for local/custom add-ons.
+# Install Python MQTT library
+RUN pip3 install --no-cache-dir --break-system-packages paho-mqtt
+
+# Install Ookla Speedtest CLI via direct binary download.
+# Uses uname -m — avoids relying on BUILD_ARCH which the Supervisor passes blank.
 RUN set -eux; \
     UNAME="$(uname -m)"; \
     echo "Detected machine arch: ${UNAME}"; \
@@ -35,9 +36,12 @@ RUN set -eux; \
     rm -rf /tmp/speedtest.tgz /tmp/speedtest.md /tmp/speedtest.5.*; \
     speedtest --version
 
-# Copy rootfs overlay (scripts, s6 service definitions)
+# Accept the Ookla license at build time so it never prompts at runtime
+RUN speedtest --accept-license --accept-gdpr > /dev/null 2>&1 || true
+
+# Copy rootfs overlay
 COPY rootfs /
 
-# Ensure scripts are executable (defensive — git may not preserve bits)
-RUN chmod +x /usr/bin/speedtest_run.sh /usr/bin/speedtest_loop.sh \
+# Ensure scripts are executable
+RUN chmod +x /usr/bin/speedtest_mqtt.py \
              /etc/s6-overlay/s6-rc.d/speedtest/run

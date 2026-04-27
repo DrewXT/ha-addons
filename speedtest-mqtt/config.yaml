@@ -1,6 +1,6 @@
 name: "Speedtest MQTT"
 description: "Runs periodic speedtests and publishes results to MQTT for Home Assistant"
-version: "1.0.4"
+version: "2.0.0"
 slug: "speedtest_mqtt"
 init: false
 arch:
