@@ -1,6 +1,6 @@
 # My Home Assistant Add-ons
 
-[![Add repository to HA](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FYOUR_USERNAME%2Fha-addons)
+[![Add repository to HA](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FDrewXT%2Fha-addons)
 
 A collection of custom Home Assistant add-ons.
 
@@ -8,7 +8,7 @@ A collection of custom Home Assistant add-ons.
 
 ### [Speedtest MQTT](./speedtest-mqtt)
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)](./speedtest-mqtt/config.yaml)
+[![Version](https://img.shields.io/badge/version-2.0.1-blue)](./speedtest-mqtt/config.yaml)
 ![Supports aarch64](https://img.shields.io/badge/aarch64-yes-green)
 ![Supports amd64](https://img.shields.io/badge/amd64-yes-green)
 ![Supports armhf](https://img.shields.io/badge/armhf-yes-green)
@@ -32,4 +32,4 @@ structured results to your MQTT broker for use as Home Assistant sensors.
 
 ## Support
 
-Open an issue on [GitHub](https://github.com/YOUR_USERNAME/ha-addons/issues).
+Open an issue on [GitHub](https://github.com/DrewXT/ha-addons/issues).
